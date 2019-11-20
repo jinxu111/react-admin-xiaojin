@@ -23,39 +23,23 @@ class Login extends Component{
      };
      login = e => {
         e.preventDefault();
-        // 缓存一下
         const { form } = this.props;
-    
-        // 校验表单并获取表单项的值
         form.validateFields((err, values) => {
-          /*
-            err 校验后的错误信息
-            values 表单项的值 
-          */
           if (!err) {
-            // 校验成功
             console.log(values);
-            // 发送请求，请求登录
             axios
               .post("http://localhost:5000/api/login", values)
               .then(response => {
-                // 请求成功（不代表登录成功）
-                // 判断response.data的值，来判断是否登录成功
                 if (response.data.status === 0) {
-                  // 登录成功
                   this.props.history.push("/");
                 } else {
-                  // 登录失败  提示错误
                   message.error(response.data.msg);
-                  // 清空密码
                   form.resetFields(["password"]);
                 }
               })
               .catch(err => {
-                console.log(err);
-                // 提示错误
+                console.log(err);     
                 message.error("网络出现故障，请刷新试试~");
-                // 清空密码
                 form.resetFields(["password"]);
               });
           }
@@ -67,7 +51,7 @@ class Login extends Component{
             <div className="login">
                <header className="login-header">
                    <img src={logo} alt="logo"/>
-                   <h1>React后台管理系统</h1>
+                   <h1>React后台管理系统by小金</h1>
                 </header> 
                 <section className="login-section">
                     <h3>用户登录</h3>
