@@ -1,10 +1,12 @@
 import React,{Component} from 'react';
 import logo from './logo.png'
-import { Form, Icon, Input,Button,message } from 'antd';
+import { Form, Icon, Input,Button } from 'antd';
 import "./login.less"
-import axios from 'axios';
+import {connect} from 'react-redux'
+import {getUserAsync} from '../../redux/action-creators/user'
 const {Item} = Form;
 @Form.create()
+@connect(null,{getUserAsync})
 class Login extends Component{
      validator=(rule,value,callback)=>{
          const name =rule.field==="username" ?'用户名':'密码'
@@ -27,19 +29,16 @@ class Login extends Component{
         form.validateFields((err, values) => {
           if (!err) {
             console.log(values);
-            axios
-              .post("http://localhost:5000/api/login", values)
+           const {username,password} = values
+           this.props.getUserAsync(username,password)
               .then(response => {
-                if (response.data.status === 0) {
+                console.log(response)
                   this.props.history.push("/");
-                } else {
-                  message.error(response.data.msg);
-                  form.resetFields(["password"]);
-                }
+             
               })
               .catch(err => {
-                console.log(err);     
-                message.error("网络出现故障，请刷新试试~");
+               
+            
                 form.resetFields(["password"]);
               });
           }
@@ -60,20 +59,6 @@ class Login extends Component{
                         {
                             getFieldDecorator("username",{
                                 rules:[
-                            //         {
-                            //        required:true,
-                            //        message:"请输入用户名"
-                            //     },{
-                            //         min:4,
-                            //         message:"最小长度为4"
-                            //     },
-                            // {
-                            //     max:11,
-                            //     message:"最大长度为11"
-                            // },{
-                            //     pattern:/\w/,
-                            //     message:"只能输入字母数字下划线"
-                            // }
                             {validator:this.validator}
                         ]
                             })
@@ -105,4 +90,5 @@ class Login extends Component{
         )
     }
 }
+
 export default Login;

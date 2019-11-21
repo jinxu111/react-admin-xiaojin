@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <button id="btn4">按钮4</button>
+    <button id="btn5">按钮5</button>
+    <button id="btn6">按钮6</button>
+    <script src="https://cdn.bootcss.com/axios/0.19.0/axios.min.js"></script>
+    <script>
+        const btn4=document.getElementById('btn4');
+        const btn5=document.getElementById('btn5');
+        const btn6=document.getElementById('btn6');
+        let token='';
+        const axiosInstance=axios.create({
+            baseURL:'http://localhost:5000/api',
+            timeout:10000,
+            headers:{
+
+            }
+        })
+        axiosInstance.interceptors.request.use(
+            (config)=>{
+                if(config.method==='post'){
+                    config.headers['content-type']='application/x-www-form-urlencoded'
+                    config.data = Object.keys(config.data).reduce((prev, key) => {
+            const value = config.data[key];
+            return prev + `&${key}=${value}`;
+          }, '').substring(1);
+        }
+        if(token){
+            config.headers.authorization = 'Bearer ' + token;
+        }
+        return config;
+                }
+            
+        )
+
+        axiosInstance.interceptors.response.use(
+            (response)=>{
+                console.log(response)
+                if(response.data.status===0){
+                    return response.data.data
+                }else{
+                    alert(response.data.msg)
+                    return Promise.reject(response.data.msg)
+                }
+            },
+            (error)=>{
+
+                  /*
+          服务器没开 Network Error ---> error.message
+          请求超时 timeout of 1000ms exceeded 
+          没网 Network Error
+          error.response 如果有值，服务器返回了响应 / 如果没有值，服务器没有返回响应
+          error.response.status 401 没有携带token
+          407 token过期或失效
+          404 资源找不到
+          403 禁止访问
+          500 服务器内部错误
+        */
+            const messageCode ={
+               407:'token问题,没有权限',
+               404:'资源找不到',
+               403:'禁止访问',
+               500:'服务器内部错误'
+            }
+            let errorMsg='';
+        if(error.response){
+            errorMsg=(messageCode[error.response.status])||'未知错误'
+        }else{
+            if(error.message.indexOf('Network Error')!==-1){
+                errorMsg='你没网了'
+            }else if(error.message.indexOf('timeout')!==-1){
+                errorMsg='请求超时'
+            }else{
+                errorMsg='未知错误'
+            }
+        }
+                
+                alert(errorMsg);
+                return Promise.reject(errorMsg);
+            }
+        )
+        const reqLogin=(username,password) =>{
+            return  axiosInstance({
+                method:'POST',
+                url:'/login',
+                data: {
+                    username,
+                    password
+                     }
+        })
+    }
+    const reGetList=()=>{
+        return  axiosInstance({
+          method: 'GET',
+          url: '/category/get',
+        })
+    }
+    const reAddCategory=(categoryName)=>{
+        return axiosInstance({
+          method: 'POST',
+          url: '/category/add',
+         data: {
+            categoryName
+         }
+        })
+    }
+        btn4.onclick=function(){
+           
+               // headers:{
+                  //  'content-type': 'application/x-www-form-urlencoded'
+               // }
+            Loginin('admin','admin')
+            .then((response)=>{
+               
+                    console.log(response.token)
+                    token=response.token;
+              
+
+            })
+        }
+        btn5.onclick = function () {
+            reGetList() 
+        .then((response) => {
+         
+            console.log(response);
+         
+        })
+        
+    }
+        btn6.onclick = function () {
+            reAddCategory('鼠标')  
+        .then((response) => {
+         
+            console.log(response);
+         
+        })
+    }
+
+
+    </script>
+</body>
+</html>
