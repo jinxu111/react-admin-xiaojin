@@ -1,6 +1,6 @@
 import axios from 'axios';
-import {message} from 'antd'
-let token='';
+import {message} from 'antd';
+import store from '../redux/store'
 const axiosInstance=axios.create({
     baseURL:'http://localhost:5000/api',
     timeout:10000,
@@ -17,6 +17,7 @@ axiosInstance.interceptors.request.use(
     return prev + `&${key}=${value}`;
   }, '').substring(1);
 }
+const {user:{token}}= store.getState();
 if(token){
     config.headers.authorization = 'Bearer ' + token;
 }

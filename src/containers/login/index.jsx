@@ -4,6 +4,7 @@ import { Form, Icon, Input,Button } from 'antd';
 import "./login.less"
 import {connect} from 'react-redux'
 import {getUserAsync} from '../../redux/action-creators/user'
+import {setItem} from '../../utils/storage'
 const {Item} = Form;
 @Form.create()
 @connect(null,{getUserAsync})
@@ -33,6 +34,7 @@ class Login extends Component{
            this.props.getUserAsync(username,password)
               .then(response => {
                 console.log(response)
+                setItem('user',response)
                   this.props.history.push("/");
              
               })

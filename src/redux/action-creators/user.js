@@ -13,6 +13,7 @@ export const getUserAsync=(username,password)=>{
         .then((response)=>{
             const action=getUserSuccess(response);
             dispatch(action)
+            return response;
         })
         
     }
