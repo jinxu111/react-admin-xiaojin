@@ -25,7 +25,9 @@ const WithCheckLogin=(WrappedComponent)=>{
                         return <Redirect to="/login" />
                     }
                 }
+                console.log(WrappedComponent)
                 return <WrappedComponent {...rest} location={location} />;
+                
             }
         }
 

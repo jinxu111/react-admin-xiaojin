@@ -1,6 +1,10 @@
 import axios from 'axios';
 import {message} from 'antd';
 import store from '../redux/store'
+import { removeItem } from '../utils/storage';
+import {removeUserSuccess} from '../redux/action-creators/user'
+import history from '../utils/history'
+
 const axiosInstance=axios.create({
     baseURL:'http://localhost:5000/api',
     timeout:10000,
@@ -47,6 +51,12 @@ axiosInstance.interceptors.response.use(
     let errorMsg='';
 if(error.response){
     errorMsg=(messageCode[error.response.status])||'未知错误'
+    if(error.response.status===401){
+        removeItem()//清storage
+        store.dispatch(removeUserSuccess())//更新 首先要有一个action
+        history.push('/login')
+    }
+
 }else{
     if(error.message.indexOf('Network Error')!==-1){
         errorMsg='你没网了'

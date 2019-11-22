@@ -1,22 +1,22 @@
-import React,{Component} from 'react';
-import routes from './config/routes'
-import {BrowserRouter as Router,Route,Switch} from 'react-router-dom'
-import "./index.less"
-export default class App extends Component{
-    render(){
-        return(
-            <Router>
-                <Switch>
-                {
-                    routes.map((route,index)=>{
-                        return <Route {...route} key={index}/>
+import React, { Component } from "react";
+import { Route, Switch } from "react-router-dom";
+import { Router } from "react-router";
+import history from "./utils/history";
 
-                    })
-                }
-                </Switch>
+import routes from "./config/routes";
+import "./index.less";
 
-            </Router>  
-        )
-        
+export default class App extends Component {
+    render() {
+      return (
+        <Router history={history}>
+          <Switch>
+            {routes.map((route, index) => {
+              return <Route {...route} key={index} />;
+            })}
+          </Switch>
+        </Router>
+      );
     }
-}
+  }
+  
