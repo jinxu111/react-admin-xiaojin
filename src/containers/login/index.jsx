@@ -5,9 +5,12 @@ import "./login.less"
 import {connect} from 'react-redux'
 import {getUserAsync} from '../../redux/action-creators/user'
 import {setItem} from '../../utils/storage'
+import WithCheckLogin from '../with_check_login/index'
 const {Item} = Form;
+@WithCheckLogin
 @Form.create()
 @connect(null,{getUserAsync})
+
 class Login extends Component{
      validator=(rule,value,callback)=>{
          const name =rule.field==="username" ?'用户名':'密码'
